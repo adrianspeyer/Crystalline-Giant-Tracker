@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crystalline Giant Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #4caf50;
+    }
+    .counter-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0;
+      max-width: 600px;
+    }
+    .counter {
+      border: 2px solid #4caf50;
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin: 8px;
+      width: 120px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      cursor: default;
+    }
+    .counter.active {
+      background: #4caf50;
+      color: #121212;
+      transform: scale(1.05);
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #rollBtn {
+      background-color: #4caf50;
+      color: #121212;
+    }
+    #rollBtn:hover {
+      background-color: #45a049;
+    }
+    #resetBtn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    #resetBtn:hover {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+  <h1>Crystalline Giant</h1>
+  <div class="counter-list" id="counterList"></div>
+  <div class="buttons">
+    <button id="rollBtn">Roll</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <script>
+    const counters = [
+      "Flying", "First Strike", "Deathtouch", "Hexproof",
+      "Lifelink", "Menace", "Reach", "Trample",
+      "Vigilance", "+1/+1"
+    ];
+
+    const counterList = document.getElementById('counterList');
+    const rollBtn = document.getElementById('rollBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let activeCounters = JSON.parse(localStorage.getItem('cgCounters')) || [];
+
+    function updateDisplay() {
+      counterList.innerHTML = '';
+      counters.forEach(counter => {
+        const div = document.createElement('div');
+        div.className = 'counter' + (activeCounters.includes(counter) ? ' active' : '');
+        div.textContent = counter;
+        counterList.appendChild(div);
+      });
+    }
+
+    updateDisplay();
+
+    rollBtn.addEventListener('click', () => {
+      const remaining = counters.filter(c => !activeCounters.includes(c));
+      if (remaining.length === 0) {
+        alert('All counters already added!');
+        return;
+      }
+      const random = remaining[Math.floor(Math.random() * remaining.length)];
+      activeCounters.push(random);
+      localStorage.setItem('cgCounters', JSON.stringify(activeCounters));
+      updateDisplay();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      activeCounters = [];
+      localStorage.removeItem('cgCounters');
+      updateDisplay();
+    });
+  </script>
+</body>
+</html>
